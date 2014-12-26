@@ -40,29 +40,29 @@ Hidden Markov Model for Senz+
 首先描述前向后向算法，有下面几个重要的概念：
 - 前向变量：HMM在t时刻，位于隐状态si，且产生了可见序列前t个符号的概率，即
 
-    αt(i) = P(v1,v2,…,vt,wt=si)
-          = ∑i P(v1,v2,…,vt-1,wt-1=sj)*P(wt=si|wt-1=sj)*Pr(vt|wt=si)
-          = ∑i αi(t-1) * aij * bik（v(t)）
+    αt(i) = P(v1,v2,…,vt,wt=si)<br/>
+          = ∑i P(v1,v2,…,vt-1,wt-1=sj)*P(wt=si|wt-1=sj)*Pr(vt|wt=si)<br/>
+          = ∑i αi(t-1) * aij * bik（v(t)）<br/>
 
 - 后向变量：HMM在t时刻，位于隐状态si的条件下，产生了可见序列后t个符号的概率，即
 
-    βt(i) = P(vt+1,vt+2,…,vT|wt=si)
-          = ∑j P(vt+2,vt+3,…,vT|wt+1=sj)*P(wt+1=si|wt=sj)*Pr(vt+1|wt+1=sj)
-          = ∑j βt+1(j)*aij*bjk（v(t+1)）
+    βt(i) = P(vt+1,vt+2,…,vT|wt=si)<br/>
+          = ∑j P(vt+2,vt+3,…,vT|wt+1=sj)*P(wt+1=si|wt=sj)*Pr(vt+1|wt+1=sj)<br/>
+          = ∑j βt+1(j)*aij*bjk（v(t+1)）<br/>
 
 - γ变量：给定观察序列及隐马尔科夫链模型，定义t时刻位于隐藏状态Si的概率变量，即
 
-    γt(i) = P(wt=si|v)
-          = αt(i)*βt(i)/P(v)
-          = αt(i)*βt(i)/∑i (αt(i)*βt(i))
-    且保证∑i γt(i) = 1。
+    γt(i) = P(wt=si|v)<br/>
+          = αt(i)*βt(i)/P(v)<br/>
+          = αt(i)*βt(i)/∑i (αt(i)*βt(i))<br/>
+    且保证∑i γt(i) = 1。<br/>
 
 - ε变量：给定观察序列及隐马尔科夫链模型，定义t时刻位于隐藏状态Si以及t+1时刻位于隐藏状态Sj的概率变量，即
 
-    εt(i,j) = P(wt=si,wt+1=sj|v)
-            = αt(i)*aij*bjk（v(t+1)）*βt+1(i)/P(v)
-            = αt(i)*aij*bjk（v(t+1)）*βt+1(i)/∑i∑j (αt(i)*aij*bjk（v(t+1)）*βt+1(i))
-    且保证γt(i) = ∑j εt(i,j)。
+    εt(i,j) = P(wt=si,wt+1=sj|v)<br/>
+            = αt(i)*aij*bjk（v(t+1)）*βt+1(i)/P(v)<br/>
+            = αt(i)*aij*bjk（v(t+1)）*βt+1(i)/∑i∑j (αt(i)*aij*bjk（v(t+1)）*βt+1(i))<br/>
+    且保证γt(i) = ∑j εt(i,j)。<br/>
 
 如果对于时间轴t上的所有γt(i)相加，我们可以得到一个总和，它可以被解释为从其他隐藏状态访问Si的期望值（网格中的所有时间的期望），或者，如果我们求和时不包括时间轴上的t=T时刻，那么它可以被解释为从隐藏状态Si出发的状态转移期望值。相似地，如果对εt(i,j)在时间轴t上求和（从t=1到t=T-1），那么该和可以被解释为从状态Si到状态Sj的状态转移期望值。
 根据上面的定义可以计算出重估的HMM模型参数。Baum及他的同事在70年代证明了上面的迭代过程一定是收敛的。因此如果我们迭代地的计算上面三个式子，由此不断地重新估计HMM的参数，那么在多次迭代后可以得到的HMM模型的一个最大似然估计。不过需要注意的是，前向后向算法所得的这个结果（最大似然估计）是一个局部最优解。

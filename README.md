@@ -40,9 +40,9 @@ Hidden Markov Model for Senz+
 首先描述前向后向算法，有下面几个重要的概念：
 - 前向变量：HMM在t时刻，位于隐状态si，且产生了可见序列前t个符号的概率，即
 
-    αt(i) = P(v1,v2,…,vt,wt=si)
-          = ∑i P(v1,v2,…,vt-1,wt-1=sj)*P(wt=si|wt-1=sj)*Pr(vt|wt=si)
-          = ∑i αi(t-1) * aij * bik（v(t)）
+    αt(i) = P(v1,v2,…,vt,wt=si) \n
+          = ∑i P(v1,v2,…,vt-1,wt-1=sj)*P(wt=si|wt-1=sj)*Pr(vt|wt=si) \n
+          = ∑i αi(t-1) * aij * bik（v(t)）\n
 
 - 后向变量：HMM在t时刻，位于隐状态si的条件下，产生了可见序列后t个符号的概率，即
 

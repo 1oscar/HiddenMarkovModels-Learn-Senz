@@ -101,5 +101,5 @@ Hidden Markov Model for Senz+
     }
     # 给定状态下，观察值概率分布,发射概率
     emission_probability = {
-        …
+        
     }

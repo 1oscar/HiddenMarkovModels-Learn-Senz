@@ -1,10 +1,14 @@
 __author__ = 'woodie'
 
+import hmm_senz.utility.decorator as decorator
+
 class HMM:
     '''Base Class : HMM
 
     The base class is used to solve the basic HMM problem.
     '''
+
+    @decorator.SenzDecorator.logger
     def __init__(self,
                  visible_output,
                  hidden_state,

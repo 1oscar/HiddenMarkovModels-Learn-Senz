@@ -125,15 +125,6 @@ class HMM:
 
         :return: None
         '''
-
-        # Check the output sample
-        # try:
-        #     if self.hT == 0 :
-        #         raise exception.SenzException("empty sample")
-        # except exception.SenzException, e:
-        #     print "[SenzException] There is no trainning sample"
-        #     return
-
         # Initialization:
         # - Calculate the every hidden state's alpha(forward variable) at t=1
         for state in self.hHiddenState:
@@ -222,8 +213,50 @@ class HMM:
                     self.hXi[t][state_i][state_j] = numerator / denominator
 
     #@decorator.SenzDecorator.funcLogger
-    def BaumWelch(self):
-        pass
+    def reestimateHMM(self, freq):
+        '''
+        REESTIMATE HMM
+
+        It's used to reestimate the param of HMM with the visible output result.
+        We recommonded that the freq should not be too small.
+        The bigger freq is, the slower HMM will be reestimated
+
+        :param freq: the frequency of the reestimate, (0,1] is allowed.
+                     the value is bigger, the speed of changing is faster.
+        :return: None
+        '''
+        # Reestimate frequency of state i in time = 1
+        for state in self.hHiddenState:
+            self.hPi = (1 - freq) + freq * self.hGamma[0][state]
+
+        # Reestimate transition matrix and emission matrix in each state
+        for state_i in self.hHiddenState:
+
+            # Calculate the expect of transition matrix (A)
+            # - Denominator of A
+            denominatorA = 0
+            for t in range(0, self.hT):
+                denominatorA += self.hGamma[t][state_i]
+            for state_j in self.hHiddenState:
+                # - Numerator of A
+                numeratorA = 0
+                for t in range(0, self.hT):
+                    numeratorA += self.hXi[t][state_i][state_j]
+                    self.hTransitionP[state_i][state_j] = (1 - freq) + freq * (numeratorA / denominatorA)
+
+            # Calculate the expect of emission matrix (B)
+            # - Denominator of B
+            denominatorB = denominatorA + self.hGamma[self.hT - 1][state_i]
+            for output in self.hVisibleOutput:
+                # - Numerator of B
+                numeratorB = 0
+                for t in range(0, self.hT):
+                    if self.hOutput[t] == output:
+                        numeratorB += self.hGamma[t][state_i]
+                self.hEmissionP[state_i][output] = (1 - freq) + freq * (numeratorB / denominatorB)
+
+
+
 
     #@decorator.SenzDecorator.funcLogger
     def estimateValue(self):

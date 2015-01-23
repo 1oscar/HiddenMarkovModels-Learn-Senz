@@ -20,12 +20,12 @@ class SenzDecorator:
             return result
         return wrapper
 
-@classmethod
-def validHMM(cls, func):
-    def wrapper(*args, **kwargs):
-        print "Here check hmm's param validation."
-        result = func(*args, **kwargs)
-        return result
+    @classmethod
+    def validHMM(cls, func):
+        def wrapper(*args, **kwargs):
+            print "Here check hmm's param validation."
+            result = func(*args, **kwargs)
+            return result
 
-    return wrapper
+        return wrapper
 

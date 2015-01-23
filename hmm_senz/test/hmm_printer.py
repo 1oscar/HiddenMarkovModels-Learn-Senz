@@ -1,6 +1,6 @@
 __author__ = 'woodie'
 
-from hmm_senz.hmm import hmm
+import hmm_senz.hmm.hmm as hmm
 
 pi = {"WINDY" : 0.2, "SUNNY" : 0.2, "RAINNY" : 0.6}
 visible_output = ("HOT","COLD")
@@ -15,12 +15,11 @@ HMM = hmm.HMM(
     transition_init,
     emission_init
 )
-print HMM.hTransitionP
-print HMM.hHiddenState
-print HMM.hVisibleOutput
-
 
 HMM.initTrainSample(["COLD", "COLD", "HOT", "COLD"])
-
-print HMM.hAlpha
-print HMM.estimateValue()
+print HMM.forward()
+#print HMM.estimateValue()
+print HMM.backward()
+print HMM.computeGamma()
+print HMM.computeXi()
+#print HMM.hBeta

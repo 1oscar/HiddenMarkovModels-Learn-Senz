@@ -19,3 +19,22 @@ HMM = hmm.HMM(
 HMM.initTrainSample(["COLD", "COLD", "HOT", "COLD", "COLD", "HOT", "COLD", "HOT", "HOT"])
 
 HMM.BaumWelch(0.01)
+
+print "transition matrix:"
+print HMM.hTransitionP
+print "emission matrix:"
+print HMM.hEmissionP
+
+# sum = 0
+# for i in HMM.hHiddenState:
+#     sum = 0
+#     for j in HMM.hHiddenState:
+#         sum += HMM.hTransitionP[i][j]
+#     print sum
+#
+# sum = 0
+# for i in HMM.hHiddenState:
+#     sum = 0
+#     for j in HMM.hVisibleOutput:
+#         sum += HMM.hEmissionP[i][j]
+#     print sum

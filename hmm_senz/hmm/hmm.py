@@ -246,12 +246,12 @@ class HMM:
             # Calculate the expect of transition matrix (A)
             # - Denominator of A
             denominatorA = 0
-            for t in range(0, self.hT):
+            for t in range(0, self.hT - 1):
                 denominatorA += self.hGamma[t][state_i]
             for state_j in self.hHiddenState:
                 # - Numerator of A
                 numeratorA = 0
-                for t in range(0, self.hT):
+                for t in range(0, self.hT - 1):
                     numeratorA += self.hXi[t][state_i][state_j]
                     self.hTransitionP[state_i][state_j] = (1 - freq) + freq * (numeratorA / denominatorA)
 

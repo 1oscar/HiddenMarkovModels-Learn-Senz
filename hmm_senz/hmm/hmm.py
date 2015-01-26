@@ -58,6 +58,11 @@ class HMM:
         self.hGamma  = []
         # Be at Si when t and at Sj when t+1
         self.hXi     = []
+        # Partial Probability
+        self.hDelta  = []
+        #
+        self.hPsi    = []
+
 
     #@decorator.SenzDecorator.funcLogger
     def initTrainSample(self, output): # The HMM's visible output
@@ -104,6 +109,18 @@ class HMM:
                 for state_j in self.hHiddenState:
                     xi_t[state_i][state_j] = 0
             self.hXi.append(xi_t)
+        # Init hDelta by hT
+        for t in range(0, self.hT):
+            delta_t = {}
+            for state in self.hHiddenState:
+                delta_t[state] = 0
+            self.hDelta.append(delta_t)
+        # Init hPsi by hT
+        for t in range(0, self.hT):
+            psi_t = {}
+            for state in self.hHiddenState:
+                psi_t[state] = 0
+            self.hPsi.append(delta_t)
         # ---INTERESTING PROBLEM---
         # If I write like this:
         #  1 alpha_t = {}
@@ -267,14 +284,20 @@ class HMM:
                 self.hEmissionP[state_i][output] = (1 - freq) + freq * (numeratorB / denominatorB)
 
     #@decorator.SenzDecorator.funcLogger
-    def BaumWelch(self, delta):
+    def BaumWelchLearn(self, delta):
         '''
         BAUM WELCH ALGORITHM
 
+        The Baum Welch algorithm uses the well-known EM algorithm to find the maximum likelihood
+        estimate of the parameters of a hidden Markov model given a set of observed feature vectors
+        It contains the following steps:
+        - Compute forward, backward variable
+        - Compute Gamma, Xi variable
+        - Check delta
+        - repeat untill the delta less then the threshold
 
-
-        :param delta:
-        :return:
+        :param delta(float) the threshold
+        :return: None
         '''
         count = 0 # It's a counter
         while True:
@@ -318,3 +341,47 @@ class HMM:
             estimate_p += self.hAlpha[self.hT - 1][state]
         return estimate_p
 
+    #@decorator.SenzDecorator.funcLogger
+    def ViterbiDecode(self):
+        '''
+        VITERBI DECODE
+
+
+
+        :return: None
+        '''
+        # Initialization
+        for state in self.hHiddenState:
+            self.hDelta[0][state] = self.hPi[state] * self.hEmissionP[state][self.hOutput[0]]
+            self.hPsi[0][state] = 0
+
+        # Recursion
+        for t in range(1, self.hT):
+            for state_j in self.hHiddenState:
+                maxval = 0
+                maxvalind = 1
+                for state_i in self.hHiddenState:
+                    val = self.hDelta[t-1][state_i] * self.hTransitionP[state_i][state_j]
+                    if val > maxval:
+                        maxval    = val
+                        maxvalind = state_i
+                self.hDelta[t][state_j] = maxval * self.hEmissionP[state_j][self.hOutput[t]]
+                self.hPsi[t][state_j]   = maxvalind
+
+        # Termination
+        Q = []
+        prob = 0
+        # - Initialization of Q
+        for i in range(0, self.hT):
+            Q.append(self.hHiddenState[0])
+        # - Compute Q when t = T
+        for state in self.hHiddenState:
+            if self.hDelta[self.hT - 1][state] > prob:
+                prob = self.hDelta[self.hT - 1][state]
+                Q[self.hT - 1] = state
+
+        # Path backtracking
+        print "The most probabily hidden state seq:"
+        for t in range(self.hT - 2, -1, -1):
+            Q[t] = self.hPsi[t+1][Q[t+1]]
+            print Q[t],

@@ -16,10 +16,6 @@ HMM = hmm.HMM(
     emission_init
 )
 
-HMM.initTrainSample(["COLD", "COLD", "HOT", "COLD"])
-print HMM.forward()
-#print HMM.estimateValue()
-print HMM.backward()
-print HMM.computeGamma()
-print HMM.computeXi()
-#print HMM.hBeta
+HMM.initTrainSample(["COLD", "COLD", "HOT", "COLD", "COLD", "HOT", "COLD", "HOT", "HOT"])
+
+HMM.BaumWelch(0.01)

@@ -123,10 +123,11 @@ class HMM:
         It will calculate HMM's forward variable(alpha).
         And store in HMM.hAlpha.
 
-        :return: None
+        :return: max_delta(float)
         '''
         # Initialization:
         # - Calculate the every hidden state's alpha(forward variable) at t=1
+        max_delta = 0 # the maximum of delta in alpha variable's elements
         for state in self.hHiddenState:
             self.hAlpha[0][state] = self.hPi[state] * self.hEmissionP[state][self.hOutput[0]]
             #print "alpha t=", 0, " state=", state, "val=", self.hAlpha[0][state]
@@ -137,8 +138,13 @@ class HMM:
                 sum = 0
                 for state_i in self.hHiddenState:
                     sum += self.hAlpha[t][state_i] * self.hTransitionP[state_i][state_j]
-                self.hAlpha[t+1][state_j] = sum * self.hEmissionP[state_j][self.hOutput[t+1]]
+                new_alpha = sum * self.hEmissionP[state_j][self.hOutput[t+1]] # The new alpha variable value
+                delta = abs(new_alpha - self.hAlpha[t+1][state_j])
+                self.hAlpha[t+1][state_j] = new_alpha
+                if delta >= max_delta:
+                    max_delta = delta
                 #print "alpha t=", t+1, " state=", state_j, "val=", self.hAlpha[t+1][state_j]
+        return max_delta
 
     #@decorator.SenzDecorator.funcLogger
     def backward(self):
@@ -149,8 +155,9 @@ class HMM:
         It will calculate HMM's backward variable(beta).
         And store in HMM.hBeta.
 
-        :return: None
+        :return: max_delta(float)
         '''
+        max_delta = 0
         # Initialization:
         for state in self.hHiddenState:
             self.hBeta[self.hT - 1][state] = 1.0
@@ -162,7 +169,12 @@ class HMM:
                     sum += self.hTransitionP[state_i][state_j] * \
                            self.hEmissionP[state_j][self.hOutput[t+1]] * \
                            self.hBeta[t+1][state_j]
-                self.hBeta[t][state_i] = sum
+                new_beta = sum # The new beta variable value
+                delta = abs(new_beta - self.hBeta[t][state_i])
+                self.hBeta[t][state_i] = new_beta
+                if delta >= max_delta:
+                    max_delta = delta
+        return max_delta
 
     #@decorator.SenzDecorator.funcLogger
     def computeGamma(self):
@@ -227,8 +239,7 @@ class HMM:
         '''
         # Reestimate frequency of state i in time = 1
         for state in self.hHiddenState:
-            self.hPi = (1 - freq) + freq * self.hGamma[0][state]
-
+            self.hPi[state] = (1 - freq) + freq * self.hGamma[0][state]
         # Reestimate transition matrix and emission matrix in each state
         for state_i in self.hHiddenState:
 
@@ -255,7 +266,34 @@ class HMM:
                         numeratorB += self.hGamma[t][state_i]
                 self.hEmissionP[state_i][output] = (1 - freq) + freq * (numeratorB / denominatorB)
 
+    #@decorator.SenzDecorator.funcLogger
+    def BaumWelch(self, delta):
+        '''
+        BAUM WELCH ALGORITHM
 
+
+
+        :param delta:
+        :return:
+        '''
+        count = 0 # It's a counter
+        while True:
+            delta_alpha = self.forward()
+            delta_beta  = self.backward()
+            self.computeGamma()
+            self.computeXi()
+            # Get the maximum of delta
+            if delta_alpha >= delta_beta:
+                max_delta = delta_alpha
+            else:
+                max_delta = delta_beta
+            print count, ". delta =", max_delta, "( Alpha =", delta_alpha, ", beta =", delta_beta, ")"
+            self.reestimateHMM(0.999)
+            count += 1
+            # Condition of Loop
+            if max_delta <= delta:
+                print "Baum Welch Algorithm runs", count, "loops"
+                break
 
 
     #@decorator.SenzDecorator.funcLogger
@@ -275,7 +313,7 @@ class HMM:
 
         # Termination:
         # - The probability of output at t = sum of every state's probability at t (that is alpha[t][state])
-        estimate_p = 0
+        estimate_p = 0.0
         for state in self.hHiddenState:
             estimate_p += self.hAlpha[self.hT - 1][state]
         return estimate_p

@@ -62,6 +62,8 @@ class HMM:
         self.hDelta  = []
         #
         self.hPsi    = []
+        # Hidden state seq of Prediction
+        self.hQ      = []
 
 
     #@decorator.SenzDecorator.funcLogger
@@ -120,7 +122,10 @@ class HMM:
             psi_t = {}
             for state in self.hHiddenState:
                 psi_t[state] = 0
-            self.hPsi.append(delta_t)
+            self.hPsi.append(psi_t)
+        # Init Hidden state seq of Prediction by hT
+        for t in range(0, self.hT):
+            self.hQ.append(self.hHiddenState[0])
         # ---INTERESTING PROBLEM---
         # If I write like this:
         #  1 alpha_t = {}
@@ -346,7 +351,10 @@ class HMM:
         '''
         VITERBI DECODE
 
-
+        It's a dynamic programming algorithm for finding the most likely sequence of hidden states,
+        called Viterbi path, that result in a sequence of observed events, especially in the context
+        of Markov information sources and hidden Markov models.
+        The result will be stored in Q variable.
 
         :return: None
         '''
@@ -359,29 +367,23 @@ class HMM:
         for t in range(1, self.hT):
             for state_j in self.hHiddenState:
                 maxval = 0
-                maxvalind = 1
+                maxvalind = self.hHiddenState[0]
                 for state_i in self.hHiddenState:
                     val = self.hDelta[t-1][state_i] * self.hTransitionP[state_i][state_j]
                     if val > maxval:
                         maxval    = val
                         maxvalind = state_i
-                self.hDelta[t][state_j] = maxval * self.hEmissionP[state_j][self.hOutput[t]]
                 self.hPsi[t][state_j]   = maxvalind
+                self.hDelta[t][state_j] = maxval * self.hEmissionP[state_j][self.hOutput[t]]
 
         # Termination
-        Q = []
         prob = 0
-        # - Initialization of Q
-        for i in range(0, self.hT):
-            Q.append(self.hHiddenState[0])
         # - Compute Q when t = T
         for state in self.hHiddenState:
             if self.hDelta[self.hT - 1][state] > prob:
                 prob = self.hDelta[self.hT - 1][state]
-                Q[self.hT - 1] = state
+                self.hQ[self.hT - 1] = state
 
         # Path backtracking
-        print "The most probabily hidden state seq:"
         for t in range(self.hT - 2, -1, -1):
-            Q[t] = self.hPsi[t+1][Q[t+1]]
-            print Q[t],
+            self.hQ[t] = self.hPsi[t+1][self.hQ[t+1]]

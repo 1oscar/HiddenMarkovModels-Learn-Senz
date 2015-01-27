@@ -60,7 +60,7 @@ class HMM:
         self.hXi     = []
         # Partial Probability
         self.hDelta  = []
-        #
+        # The Viterbi Path
         self.hPsi    = []
         # Hidden state seq of Prediction
         self.hQ      = []
@@ -305,7 +305,7 @@ class HMM:
         :return: None
         '''
         count = 0 # It's a counter
-        while True:
+        while count < 99:
             delta_alpha = self.forward()
             delta_beta  = self.backward()
             self.computeGamma()
@@ -315,14 +315,17 @@ class HMM:
                 max_delta = delta_alpha
             else:
                 max_delta = delta_beta
-            print count, ". delta =", max_delta, "( Alpha =", delta_alpha, ", beta =", delta_beta, ")"
+            #print count, ". delta =", max_delta, "( Alpha =", delta_alpha, ", beta =", delta_beta, ")"
             self.reestimateHMM(0.999)
             count += 1
             # Condition of Loop
             if max_delta <= delta:
-                print "Baum Welch Algorithm runs", count, "loops"
+                #print "Baum Welch Algorithm runs", count, "loops"
                 break
-
+        else:
+            # Here throw senz exception
+            # - no partial best solution.
+            print "ERROR"
 
     #@decorator.SenzDecorator.funcLogger
     def estimateValue(self):

@@ -11,13 +11,16 @@ def createVisibleBehaviorSet():
     '''
     # The following tuples are Evidences sets
     # - It is the key value, every behavior must have a time evidence
-    Time = ("MORNING", "NOON", "AFTERNOON", "NIGHT", "MIDNIGHT")
+    # Time = ("MORNING", "NOON", "AFTERNOON", "NIGHT", "MIDNIGHT")
+    Time = ("MORNING", "AFTERNOON", "NIGHT")
     # - It is location evidence
-    Location = ("ENTERTAINMENT", "COMMUNITY", "GOVERNMENT", "CATERING", "EDUCATION",
-                "TRAFFIC", "FINANCE", "TRAVEL", "HOTEL", "COMPANY",
-                "SHOPPING", "MEDICAL", "BUSINESS")
+    # Location = ("ENTERTAINMENT", "COMMUNITY", "GOVERNMENT", "CATERING", "EDUCATION",
+    #             "TRAFFIC", "FINANCE", "TRAVEL", "HOTEL", "COMPANY",
+    #             "SHOPPING", "MEDICAL", "BUSINESS")
+    Location = ("EDUCATION", "SHOPPING", "COMMUNITY")
     # - It is motion evidence
-    Motion = ("SITTING", "WALKING", "RUNNING", "RIDING", "DRIVING")
+    # Motion = ("SITTING", "WALKING", "RUNNING", "RIDING", "DRIVING")
+    Motion = ("SITTING", "WALKING")
     # According to these sets, we instantiate a list of behavior obj.
     behav = []
     for t in Time:

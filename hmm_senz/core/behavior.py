@@ -20,13 +20,15 @@ def createVisibleBehaviorSet():
     Location = ("EDUCATION", "SHOPPING", "COMMUNITY")
     # - It is motion evidence
     # Motion = ("SITTING", "WALKING", "RUNNING", "RIDING", "DRIVING")
-    Motion = ("SITTING", "WALKING")
+    Motion = ("SITTING", "WALKING", "RUNNING")
     # According to these sets, we instantiate a list of behavior obj.
     behav = []
+    i = 0
     for t in Time:
         for l in Location:
             for m in Motion:
-                behav.append(Behavior(time = t, location = l, motion = m))
+                behav.append(Behavior(motion = m, location = l, time = t, no = i))
+                i += 1
     return behav
 
 class Behavior:
@@ -45,15 +47,14 @@ class Behavior:
         for evi_name in self.bEvidences.keys():
             self.bEviName.append(evi_name)
 
-    def evidence(self, evi_name):
+    def getEvidenceName(self):
+        return self.bEviName
+
+    def getEvidenceCont(self, evi_name):
         return self.bEvidences[evi_name]
 
-    def printAll(self):
-        print self.bEvidences
-
-    def printEvidenceName(self):
-        print self.bEviName
-
+    def getEvidences(self):
+        return self.bEvidences
 
 
 

@@ -29,20 +29,20 @@ class HMM:
         # - key1 is hidden states' name
         # - key2 is hidden states' name
         # - value is the transition probability from key1 to key2
-        # self.hTransitionP = transition_init
-        self.hTransitionP = self.matrixToDict(transition_init, self.hHiddenState, self.hHiddenState)
+        self.hTransitionP = transition_init
+        # self.hTransitionP = self.matrixToDict(transition_init, self.hHiddenState, self.hHiddenState)
         # The initial of hEmissionP
         # - It's a 2-dimension dict
         # - { key1 : { key2 : value } }
         # - key1 is hidden states' name
         # - key2 is visible outputs' name
         # - value is the transition probability from key1 to key2
-        # self.hEmissionP   = emission_init
-        self.hEmissionP   = self.matrixToDict(emission_init, self.hHiddenState, self.hVisibleOutput)
+        self.hEmissionP   = emission_init
+        # self.hEmissionP   = self.matrixToDict(emission_init, self.hHiddenState, self.hVisibleOutput)
         # The initial probablility of every hidden state
         # - eg. pi = {"sunny" : 0.2, "windy" : 0.3, "cloudy" : 0.1, "rainny" : 0.4}
-        # self.hPi          = pi
-        self.hPi          = self.matrixToDict(pi, 0, self.hHiddenState)
+        self.hPi          = pi
+        # self.hPi          = self.matrixToDict(pi, 0, self.hHiddenState)
 
         # The HMM's timestamp, default is 0
         self.hT       = 0
@@ -67,25 +67,6 @@ class HMM:
         self.hPsi    = []
         # Hidden state seq of Prediction
         self.hQ      = []
-
-    def matrixToDict(self, matrix, row, col):
-        dict = {}
-        i = 0 # index of row/col of matrix
-        # If matrix has no row
-        if row == 0:
-            for c in col:
-                dict[c] = matrix[i]
-                i += 1
-            return dict
-        # Else if matrix is two-dimension
-        for r in row:
-            j = 0 # index of col of matrix
-            dict[r] = {}
-            for c in col:
-                dict[r][c] = matrix[i][j]
-                j += 1
-            i += 1
-        return dict
 
     #@decorator.SenzDecorator.funcLogger
     def initTrainSample(self, output): # The HMM's visible output
@@ -411,3 +392,18 @@ class HMM:
         # Path backtracking
         for t in range(self.hT - 2, -1, -1):
             self.hQ[t] = self.hPsi[t+1][self.hQ[t+1]]
+
+    def getTransition(self):
+        return self.hTransitionP
+
+    def getEmission(self):
+        return self.hEmissionP
+
+    def getOutputSeq(self):
+        return self.hOutput
+
+    def getPi(self):
+        return self.hPi
+
+    def getQ(self):
+        return self.hQ

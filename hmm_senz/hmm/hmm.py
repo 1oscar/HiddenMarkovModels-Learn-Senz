@@ -317,12 +317,12 @@ class HMM:
                 max_delta = delta_alpha
             else:
                 max_delta = delta_beta
-            #print count, ". delta =", max_delta, "( Alpha =", delta_alpha, ", beta =", delta_beta, ")"
+            print count, ". delta =", max_delta, "( Alpha =", delta_alpha, ", beta =", delta_beta, ")"
             self.reestimateHMM(0.999)
             count += 1
             # Condition of Loop
             if max_delta <= delta:
-                #print "Baum Welch Algorithm runs", count, "loops"
+                print "Baum Welch Algorithm runs", count, "loops"
                 break
         else:
             # Here throw senz exception

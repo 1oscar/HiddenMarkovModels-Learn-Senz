@@ -26,11 +26,6 @@ u.printEmissionMatrix()
 u.printHiddenState()
 u.printVisibleOutput()
 
-s.initHMMParam(pi, transition_init, emission_init)
-
-
-
-
 s.initTrainSample([{'motion': 'RUNNING', 'location': 'COMMUNITY', 'time': 'AFTERNOON'},
                    {'motion': 'SITTING', 'location': 'SHOPPING', 'time': 'AFTERNOON'}])
 

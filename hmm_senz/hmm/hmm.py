@@ -366,7 +366,7 @@ class HMM:
         # Initialization
         for state in self.hHiddenState:
             self.hDelta[0][state] = self.hPi[state] * self.hEmissionP[state][self.hOutput[0]]
-            self.hPsi[0][state] = 0
+            self.hPsi[0][state] = self.hHiddenState[0]
 
         # Recursion
         for t in range(1, self.hT):
@@ -392,6 +392,12 @@ class HMM:
         # Path backtracking
         for t in range(self.hT - 2, -1, -1):
             self.hQ[t] = self.hPsi[t+1][self.hQ[t+1]]
+
+    def getHiddenState(self):
+        return self.hHiddenState
+
+    def getVisibleOutput(self):
+        return self.hVisibleOutput
 
     def getTransition(self):
         return self.hTransitionP

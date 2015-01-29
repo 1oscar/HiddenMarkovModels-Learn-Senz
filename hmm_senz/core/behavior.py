@@ -27,7 +27,11 @@ def createVisibleBehaviorSet():
     for t in Time:
         for l in Location:
             for m in Motion:
-                behav.append(Behavior(motion = m, location = l, time = t, no = i))
+                behav.append(Behavior(motion = m,
+                                      location = l,
+                                      # no = i,
+                                      time = t
+                                      ))
                 i += 1
     return behav
 

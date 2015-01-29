@@ -19,25 +19,21 @@ emission_init   = [[0.037, 0.037, 0.037, 0.037, 0.037, 0.037, 0.037, 0.037, 0.03
 
 s = senz.Senz(pi, transition_init, emission_init)
 
-# print s.hHiddenState
-# print len(s.hHiddenState)
-# print s.hVisibleOutput
-# print len(s.hVisibleOutput)
-# print s.hTransitionP
-# print s.hEmissionP
-# print s.hPi
+u = utility.Utility(s)
+u.printTransitionMatrix()
+u.printEmissionMatrix()
+u.printHiddenState()
+u.printVisibleOutput()
 
-utility.Utility.printEmissionMatrix(s.getEmission())
-utility.Utility.printTransitionMatrix(s.getTransition())
-
-
-s.initTrainSample([{'motion': 'RUNNING', 'no': 17, 'location': 'COMMUNITY', 'time': 'AFTERNOON'},
-                   {'motion': 'SITTING', 'no': 12, 'location': 'SHOPPING', 'time': 'AFTERNOON'}])
+s.initTrainSample([{'motion': 'RUNNING', 'location': 'COMMUNITY', 'time': 'AFTERNOON'},
+                   {'motion': 'SITTING', 'location': 'SHOPPING', 'time': 'AFTERNOON'}])
 
 s.BaumWelchLearn(0.01)
 s.ViterbiDecode()
 
-utility.Utility.printEmissionMatrix(s.getEmission())
-utility.Utility.printTransitionMatrix(s.getTransition())
+u.printTransitionMatrix()
+u.printEmissionMatrix()
+u.printHiddenState()
+u.printVisibleOutput()
 
 print s.getQ()

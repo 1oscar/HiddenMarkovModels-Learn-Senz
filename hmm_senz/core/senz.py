@@ -29,11 +29,11 @@ class Senz(hmm.HMM):
         for o in output:
             # For every element in output,
             # which is same with in visible_output_obj
-            output_obj.append(self.outputdictToObj(o))
+            output_obj.append(self.outputDictToObj(o))
         # init train sample
         hmm.HMM.initTrainSample(self, output_obj)
 
-    def outputdictToObj(self, output_dict):
+    def outputDictToObj(self, output_dict):
         '''
         OUTPUT DICT TO OBJ
 

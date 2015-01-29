@@ -2,6 +2,7 @@ __author__ = 'woodie'
 
 import hmm_senz.core.behavior as behavior
 import hmm_senz.hmm.hmm as hmm
+import hmm_senz.core.model as model
 
 class Senz(hmm.HMM):
     '''
@@ -10,20 +11,47 @@ class Senz(hmm.HMM):
 
     '''
     # Override base func
-    def __init__(self, pi_init, transition_init, emission_init):
-        # senz's visible output for hmm
-        self.visible_output_obj = behavior.createVisibleBehaviorSet()
+    def __init__(self, model = model.SenzModel()):
+        # the senz model
+        self.model = model
         # senz's hidden state for hmm
-        hidden_state   = ("WORK", "LIVE", "RELAX", "ENTERTAIN", "EXERCISE")
+        self.hidden_state = model.mDefaultHiddenStateSet
+        # senz's visible output for hmm
+        self.visible_output_obj = model.mDefaultVisibleOutputSet
+        # Set a default value for hmm
+        self.initHMMParam(model.mDefaultPi,
+                          model.mDefaultTransitionMatrix,
+                          model.mDefaultEmissionMatrix)
+
+    def initHMMParam(self, pi_init, transition_init, emission_init):
+        '''
+        INIT HMM PARAM
+
+
+
+        :param pi_init:
+        :param transition_init:
+        :param emission_init:
+        :return:
+        '''
         # Transfer matrix to dict
-        transition = self.matrixToDict(transition_init, hidden_state, hidden_state)
-        emission   = self.matrixToDict(emission_init, hidden_state, self.visible_output_obj)
-        pi         = self.matrixToDict(pi_init, 0, hidden_state)
+        transition = self.matrixToDict(transition_init, self.hidden_state, self.hidden_state)
+        emission   = self.matrixToDict(emission_init, self.hidden_state, self.visible_output_obj)
+        pi         = self.matrixToDict(pi_init, 0, self.hidden_state)
         # Invoke base class
-        hmm.HMM.__init__(self, self.visible_output_obj, hidden_state, pi, transition, emission)
+        hmm.HMM.__init__(self, self.visible_output_obj, self.hidden_state, pi, transition, emission)
+
 
     # Override base func
     def initTrainSample(self, output): # The Senz's visible output
+        '''
+        INIT TRAIN SAMPLE
+
+
+
+        :param output:
+        :return:
+        '''
         # Transfer train sample from dict to obj
         output_obj = []
         for o in output:

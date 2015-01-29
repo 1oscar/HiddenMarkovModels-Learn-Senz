@@ -1,7 +1,10 @@
 __author__ = 'woodie'
 
-#import hmm_senz.utility.senz_exception as exception
-import hmm_senz.core.behavior as behavior
+# the utility method
+
+
+
+# the utility class for printing senz info
 
 class Utility:
 
@@ -42,7 +45,6 @@ class Utility:
     def printVisibleOutput(self):
         list = self.senz.getVisibleOutput()
         print "   ---- HMM's Visible Output List ----"
-        print "  ",
         for output in list:
             print "   *", output.getEvidences()
         self.printOver()

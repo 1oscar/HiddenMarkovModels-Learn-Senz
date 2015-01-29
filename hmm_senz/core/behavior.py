@@ -1,40 +1,6 @@
 __author__ = 'woodie'
 
 
-def createVisibleBehaviorSet():
-    '''
-    CREATE VISIBLE BEHAVIOR SET
-
-    This func will create a set of visible output for HMM.
-
-    :return: behav(list of obj)
-    '''
-    # The following tuples are Evidences sets
-    # - It is the key value, every behavior must have a time evidence
-    # Time = ("MORNING", "NOON", "AFTERNOON", "NIGHT", "MIDNIGHT")
-    Time = ("MORNING", "AFTERNOON", "NIGHT")
-    # - It is location evidence
-    # Location = ("ENTERTAINMENT", "COMMUNITY", "GOVERNMENT", "CATERING", "EDUCATION",
-    #             "TRAFFIC", "FINANCE", "TRAVEL", "HOTEL", "COMPANY",
-    #             "SHOPPING", "MEDICAL", "BUSINESS")
-    Location = ("EDUCATION", "SHOPPING", "COMMUNITY")
-    # - It is motion evidence
-    # Motion = ("SITTING", "WALKING", "RUNNING", "RIDING", "DRIVING")
-    Motion = ("SITTING", "WALKING", "RUNNING")
-    # According to these sets, we instantiate a list of behavior obj.
-    behav = []
-    i = 0
-    for t in Time:
-        for l in Location:
-            for m in Motion:
-                behav.append(Behavior(motion = m,
-                                      location = l,
-                                      # no = i,
-                                      time = t
-                                      ))
-                i += 1
-    return behav
-
 class Behavior:
     '''
     Class: BEHAVIOR

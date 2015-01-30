@@ -23,25 +23,6 @@ class Senz(hmm.HMM):
                           model.mDefaultTransitionMatrix,
                           model.mDefaultEmissionMatrix)
 
-    def initHMMParam(self, pi_init, transition_init, emission_init):
-        '''
-        INIT HMM PARAM
-
-
-
-        :param pi_init:
-        :param transition_init:
-        :param emission_init:
-        :return:
-        '''
-        # Transfer matrix to dict
-        transition = self.matrixToDict(transition_init, self.hidden_state, self.hidden_state)
-        emission   = self.matrixToDict(emission_init, self.hidden_state, self.visible_output_obj)
-        pi         = self.matrixToDict(pi_init, 0, self.hidden_state)
-        # Invoke base class
-        hmm.HMM.__init__(self, self.visible_output_obj, self.hidden_state, pi, transition, emission)
-
-
     # Override base func
     def initTrainSample(self, output): # The Senz's visible output
         '''
@@ -60,6 +41,25 @@ class Senz(hmm.HMM):
             output_obj.append(self.outputDictToObj(o))
         # init train sample
         hmm.HMM.initTrainSample(self, output_obj)
+
+    #
+    def initHMMParam(self, pi_init, transition_init, emission_init):
+        '''
+        INIT HMM PARAM
+
+
+
+        :param pi_init:
+        :param transition_init:
+        :param emission_init:
+        :return:
+        '''
+        # Transfer matrix to dict
+        transition = self.matrixToDict(transition_init, self.hidden_state, self.hidden_state)
+        emission   = self.matrixToDict(emission_init, self.hidden_state, self.visible_output_obj)
+        pi         = self.matrixToDict(pi_init, 0, self.hidden_state)
+        # Invoke base class
+        hmm.HMM.__init__(self, self.visible_output_obj, self.hidden_state, pi, transition, emission)
 
     def outputDictToObj(self, output_dict):
         '''

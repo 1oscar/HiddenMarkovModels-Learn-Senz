@@ -28,13 +28,20 @@ class SenzModel:
         # - It is motion evidence
         self.mDefaultMotion = motion
         # - It is sound evidence
-        # self.mDefaultSound = sound
+        self.mDefaultSound = sound
         # - It's visible output set
         #   It is made up of element above-mentioned
         self.mDefaultVisibleOutputSet = self.createDefaultVisibleBehaviorSet()
 
         # - It's hidden state set
         self.mDefaultHiddenStateSet = hidden_state
+
+        # - Condition Motion Matrix
+        self.mMotionConditionMatrix = self.createDefaultConditionMatrix(self.mDefaultMotion)
+        # - Condition Location Matrix
+        self.mLocationConditionMatrix = self.createDefaultConditionMatrix(self.mDefaultLocation)
+        # - Condition Location Matrix
+        self.mSoundConditionMatrix = self.createDefaultConditionMatrix(self.mDefaultSound)
 
         # - It's the prior probability of hidden states
         self.mDefaultPi = self.createDefaultPi()
@@ -43,21 +50,27 @@ class SenzModel:
         # - Emission Matrix
         self.mDefaultEmissionMatrix = self.createDefaultEmissionMatrix()
 
-        # - Condition Motion Matrix
-        self.mMotionConditionMatrix = self.createDefaultConditionMatrix(self.mDefaultMotion)
-        # - Condition Location Matrix
-        self.mLocationConditionMatrix = self.createDefaultConditionMatrix(self.mDefaultLocation)
-        # - Condition Location Matrix
-        # self.mSoundConditionMatrix = self.createDefaultConditionMatrix(self.mDefaultSound)
 
+    def setPi(self, pi):
+        self.mDefaultPi = pi
 
-    def createDefaultPi(self):
-        pi    = []
-        size  = len(self.mDefaultHiddenStateSet)
-        value = 1/size
-        for i in range(0, size):
-            pi.append(value)
-        return pi
+    def setTransitionP(self, transition_p):
+        self.mDefaultTransitionMatrix = transition_p
+
+    def setMotionConditionP(self, motion_p):
+        self.mMotionConditionMatrix = motion_p
+        # Re-compute emission matrix
+        self.mDefaultEmissionMatrix = self.createDefaultEmissionMatrix()
+
+    def setLocationConditionP(self, location_p):
+        self.mLocationConditionMatrix = location_p
+        # Re-compute emission matrix
+        self.mDefaultEmissionMatrix = self.createDefaultEmissionMatrix()
+
+    def setSoundConditionP(self, sound_p):
+        self.mSoundConditionMatrix = sound_p
+        # Re-compute emission matrix
+        self.mDefaultEmissionMatrix = self.createDefaultEmissionMatrix()
 
     # The construction of Condition Matrix
     # - Motion Condition Matrix
@@ -72,40 +85,45 @@ class SenzModel:
                 condition_matrix[c][state] = value
         return condition_matrix
 
+
+    def createDefaultPi(self):
+        pi    = {}
+        size  = len(self.mDefaultHiddenStateSet)
+        value = 1/size
+        for state in self.mDefaultHiddenStateSet:
+            pi[state] = value
+        return pi
+
     def createDefaultTransitionMatrix(self):
-        transition = []
+        transition = {}
         size       = len(self.mDefaultHiddenStateSet)
         value      = 1/size
-        for i in range(0, size):
-            tmp = []
-            for j in range(0, size):
-                tmp.append(value)
-            transition.append(tmp)
+        for state_i in self.mDefaultHiddenStateSet:
+            transition[state_i] = {}
+            for state_j in self.mDefaultHiddenStateSet:
+                transition[state_i][state_j] = value
         return transition
 
     def createDefaultEmissionMatrix(self):
-        emission = []
-        row      = len(self.mDefaultHiddenStateSet)
-        col      = len(self.mDefaultVisibleOutputSet)
-        value    = 1/col
-        for r in range(0, row):
-            tmp = []
-            for j in range(0, col):
-                tmp.append(value)
-            emission.append(tmp)
+        emission = {}
+        # row      = len(self.mDefaultHiddenStateSet)
+        # col      = len(self.mDefaultVisibleOutputSet)
+        for state in self.mDefaultHiddenStateSet:
+            emission[state] = {}
+            for output in self.mDefaultVisibleOutputSet:
+                product = 1
+                for evidence_name in output.getEvidenceName():
+                    evidence = output.getEvidences()
+                    # print evidence, evidence_name
+                    if evidence_name == "motion":
+                        product *= self.mMotionConditionMatrix[evidence[evidence_name]][state]
+                    elif evidence_name == "location":
+                        product *= self.mLocationConditionMatrix[evidence[evidence_name]][state]
+                    elif evidence_name == "sound":
+                        product *= self.mSoundConditionMatrix[evidence[evidence_name]][state]
+                    # print evidence_name,
+                emission[state][output] = product
         return emission
-
-    # def createDefaultEmissionMatrix(self):
-    #     emission = []
-    #     row      = len(self.mDefaultHiddenStateSet)
-    #     col      = len(self.mDefaultVisibleOutputSet)
-    #     value    = 1/col
-    #     for r in range(0, row):
-    #         tmp = []
-    #         for j in range(0, col):
-    #             tmp.append(value)
-    #         emission.append(tmp)
-    #     return emission
 
     def createDefaultVisibleBehaviorSet(self):
         '''

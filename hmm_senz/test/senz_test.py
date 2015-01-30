@@ -20,8 +20,6 @@ location_condition = {
 m = model.SenzModel()
 m.setPi(pi)
 m.setMotionConditionP(motion_condition)
-m.setLocationConditionP(location_condition)
-print
 
 s = senz.Senz(m)
 

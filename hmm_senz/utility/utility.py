@@ -19,12 +19,9 @@ class Utility:
         matrix = self.senz.getEmission()
         print "   ---- HMM's Emission Matrix ----"
         for state in matrix:
-            sum = 0
             print "   * [", state, "] ->"
             for output in matrix[state]:
                 print "    ", output.getEvidences(), "=", matrix[state][output]
-                sum += matrix[state][output]
-            print sum
         self.printOver()
 
     def printTransitionMatrix(self):

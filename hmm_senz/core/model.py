@@ -41,7 +41,7 @@ class SenzModel:
         # - Condition Location Matrix
         self.mLocationConditionMatrix = self.createDefaultConditionMatrix(self.mDefaultLocation)
         # - Condition Location Matrix
-        self.mSoundConditionMatrix = self.createDefaultConditionMatrix(self.mDefaultSound)
+        # self.mSoundConditionMatrix = self.createDefaultConditionMatrix(self.mDefaultSound)
 
         # - It's the prior probability of hidden states
         self.mDefaultPi = self.createDefaultPi()
@@ -75,16 +75,21 @@ class SenzModel:
     # The construction of Condition Matrix
     # - Motion Condition Matrix
     def createDefaultConditionMatrix(self, condition):
-        size       = len(self.mDefaultHiddenStateSet)
+        size       = len(condition) # The count of condition
         value      = 1/size
         # the return value
+        # condition_matrix = {}
+        # for c in condition:
+        #     condition_matrix[c] = {}
+        #     for state in self.mDefaultHiddenStateSet:
+        #         condition_matrix[c][state] = value
+        # return condition_matrix
         condition_matrix = {}
-        for c in condition:
-            condition_matrix[c] = {}
-            for state in self.mDefaultHiddenStateSet:
-                condition_matrix[c][state] = value
+        for state in self.mDefaultHiddenStateSet:
+            condition_matrix[state] = {}
+            for c in condition:
+                condition_matrix[state][c] = value
         return condition_matrix
-
 
     def createDefaultPi(self):
         pi    = {}
@@ -116,11 +121,11 @@ class SenzModel:
                     evidence = output.getEvidences()
                     # print evidence, evidence_name
                     if evidence_name == "motion":
-                        product *= self.mMotionConditionMatrix[evidence[evidence_name]][state]
+                        product *= self.mMotionConditionMatrix[state][evidence[evidence_name]]
                     elif evidence_name == "location":
-                        product *= self.mLocationConditionMatrix[evidence[evidence_name]][state]
+                        product *= self.mLocationConditionMatrix[state][evidence[evidence_name]]
                     elif evidence_name == "sound":
-                        product *= self.mSoundConditionMatrix[evidence[evidence_name]][state]
+                        product *= self.mSoundConditionMatrix[state][evidence[evidence_name]]
                     # print evidence_name,
                 emission[state][output] = product
         return emission

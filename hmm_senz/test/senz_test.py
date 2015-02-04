@@ -26,7 +26,7 @@ motion_condition = {
 location_condition = {
     "WORK": {"EDUCATION": 0.6, "SHOPPING": 0.01, "COMMUNITY": 0.39},
     "LIVE": {"EDUCATION": 0.3, "SHOPPING": 0.05, "COMMUNITY": 0.65},
-    "RELAX": {"EDUCATION": 0.15, "SHOPPING": 0.55, "COMMUNITY": 0.3},
+    "RELAX": {"EDUCATION": 0.1, "SHOPPING": 0.65, "COMMUNITY": 0.25},
     "ENTERTAIN": {"EDUCATION": 0.1, "SHOPPING": 0.8, "COMMUNITY": 0.1},
     "EXERCISE": {"EDUCATION": 0.2, "SHOPPING": 0.4, "COMMUNITY": 0.4}
 }
@@ -34,6 +34,7 @@ location_condition = {
 m = model.SenzModel()
 m.setPi(pi)
 m.setMotionConditionP(motion_condition)
+m.setLocationConditionP(location_condition)
 
 s = senz.Senz(m)
 
@@ -83,7 +84,6 @@ s.initTrainSample([{'motion': 'SITTING', 'location': 'EDUCATION'},
                    {'motion': 'RUNNING', 'location': 'COMMUNITY'},
                    {'motion': 'RUNNING', 'location': 'COMMUNITY'}
                    ])
-
 s.BaumWelchLearn(0.01)
 s.ViterbiDecode()
 
